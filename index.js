@@ -73,8 +73,10 @@ async function run() {
       res.json(result);
     });
 
+    //reading subscription filtered by mail
+
     app.get("/subscription/:email", async (req, res) => {
-      const email = {email: req.params.email};
+      const email = { email: req.params.email };
       console.log(email);
       const result = subscriptionCollection.find(email);
       const allResult = await result.toArray();
@@ -89,7 +91,6 @@ async function run() {
       console.log(result);
       res.json(result);
     });
-
 
     //adding package to database
     app.post("/package", async (req, res) => {
@@ -120,42 +121,11 @@ async function run() {
     //redaing notes from databe
     app.get("/notes/:id", async (req, res) => {
       const id = req.params.id;
-      const data = {email: id};
+      const data = { email: id };
       console.log(id);
       const result = notesCollection.find(data);
       const allResult = await result.toArray();
       res.json(allResult);
-    });
-
-
-    app.put("/users", async (req, res) => {
-      const user = req.body;
-      const query = { email: user.email };
-      const option = { upsert: true };
-      const updateDoc = { $set: user };
-      const result = await usersCollection.updateOne(query, updateDoc, option);
-      res.json(result);
-    });
-
-    app.post("/appointments", async (req, res) => {
-      const bookingInfo = req.body;
-      const result = await appointmentsCollection.insertOne(bookingInfo);
-      console.log("inside post");
-      // console.log(bookingInfo);
-      res.json(result);
-    });
-
-    app.post("/create-payment-intent", async (req, res) => {
-      const paymentInfo = req.body;
-      const amount = paymentInfo.price * 100;
-      const paymentIntent = await stripe.paymentIntents.create({
-        currency: "usd",
-        amount: amount,
-        payment_method_types: ["card"],
-      });
-      res.json({
-        clientSecret: paymentIntent.client_secret,
-      });
     });
   } finally {
     // await client.close();
