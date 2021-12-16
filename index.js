@@ -30,21 +30,7 @@ async function run() {
     const packagesCollection = database.collection("packages");
     const subscriptionCollection = database.collection("subscription");
 
-    app.get("/appointments/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const result = await appointmentsCollection.findOne(query);
-      res.json(result);
-    });
-
-    app.put("/appointments/:id", async (req, res) => {
-      const id = req.params.id;
-      const paymentInfo = req.body;
-      const query = { _id: ObjectId(id) };
-      const doc = { $set: { payment: paymentInfo } };
-      const result = await appointmentsCollection.updateOne(query, doc);
-      res.json(result);
-    });
+    //get to check admin or not
 
     app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
@@ -56,6 +42,23 @@ async function run() {
       }
       // console.log(user, isAdmin);
       res.json({ admin: isAdmin });
+    });
+
+    //deleteing user
+    app.delete("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.deleteOne(query);
+      console.log(user);
+    //   res.json();
+    });
+
+    //getting all users
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const user = usersCollection.find(query);
+      const result = await user.toArray();
+      res.json(result);
     });
 
     //adding user
