@@ -139,13 +139,18 @@ async function run() {
 
     //reading subscription filtered by mail
 
-    app.get("/subscription/:email", async (req, res) => {
+    app.get("/subscription/:email", authenticateToken, async (req, res) => {
       const userEmail = req.user.email;
-      const email = { email: req.params.email };
-      console.log(email);
-      const result = subscriptionCollection.find(email);
-      const allResult = await result.toArray();
-      res.json(allResult);
+      if (userEmail === req.params.email) {
+        const email = { email: req.params.email };
+        console.log(email);
+        const result = subscriptionCollection.find(email);
+        const allResult = await result.toArray();
+        res.json(allResult);
+      }
+      else{
+        res.sendStatus(401)
+      }
     });
 
     //for adding notes to database
