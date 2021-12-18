@@ -52,17 +52,21 @@ async function run() {
 
     //get to check admin or not
 
-    app.get("/users/:email", async (req, res) => {
+    app.get("/users/:email", authenticateToken, async (req, res) => {
       const email = req.params.email;
       cpnsole.log(req.user.email);
-      const query = { email: email };
-      const user = await usersCollection.findOne(query);
-      let isAdmin = false;
-      if (user?.role === "admin") {
-        isAdmin = true;
+      if (req.user.email === email) {
+        const query = { email: email };
+        const user = await usersCollection.findOne(query);
+        let isAdmin = false;
+        if (user?.role === "admin") {
+          isAdmin = true;
+        }
+        // console.log(user, isAdmin);
+        res.json({ admin: isAdmin });
+      } else {
+        res.sendStatus(401).json({ message: "you are not permitted" });
       }
-      // console.log(user, isAdmin);
-      res.json({ admin: isAdmin });
     });
 
     //deleteing user
@@ -83,7 +87,7 @@ async function run() {
     });
 
     //getting all users
-    app.get("/users", async (req, res) => {
+    app.get("/users", authenticateToken, async (req, res) => {
       const query = {};
       const user = usersCollection.find(query);
       const result = await user.toArray();
@@ -91,7 +95,7 @@ async function run() {
     });
 
     //getting single users
-    app.get("/user/:email", async (req, res) => {
+    app.get("/user/:email", authenticateToken, async (req, res) => {
       const email = req.params.email;
       console.log(email);
       const query = { email: email };
@@ -138,7 +142,7 @@ async function run() {
 
     //reading subscription filtered by mail
 
-    app.get("/subscription/:email", async (req, res) => {
+    app.get("/subscription/:email", authenticateToken, async (req, res) => {
       const email = { email: req.params.email };
       console.log(email);
       const result = subscriptionCollection.find(email);
@@ -212,7 +216,7 @@ async function run() {
     });
 
     //redaing notes from databe
-    app.get("/notes/:id", async (req, res) => {
+    app.get("/notes/:id", authenticateToken, async (req, res) => {
       const id = req.params.id;
       const data = { email: id };
       console.log(id);
