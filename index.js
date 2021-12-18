@@ -55,18 +55,14 @@ async function run() {
     app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
       cpnsole.log(req.user.email);
-      if (req.user.email === email) {
-        const query = { email: email };
-        const user = await usersCollection.findOne(query);
-        let isAdmin = false;
-        if (user?.role === "admin") {
-          isAdmin = true;
-        }
-        // console.log(user, isAdmin);
-        res.json({ admin: isAdmin });
-      } else {
-        res.sendStatus(401).json({ message: "you are not permitted" });
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
       }
+      // console.log(user, isAdmin);
+      res.json({ admin: isAdmin });
     });
 
     //deleteing user
