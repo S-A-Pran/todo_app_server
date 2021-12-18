@@ -52,7 +52,7 @@ async function run() {
 
     //get to check admin or not
 
-    app.get("/users/:email", authenticateToken, async (req, res) => {
+    app.get("/users/:email", async (req, res) => {
       const email = req.params.email;
       cpnsole.log(req.user.email);
       if (req.user.email === email) {
@@ -87,7 +87,7 @@ async function run() {
     });
 
     //getting all users
-    app.get("/users", authenticateToken, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const query = {};
       const user = usersCollection.find(query);
       const result = await user.toArray();
@@ -95,7 +95,7 @@ async function run() {
     });
 
     //getting single users
-    app.get("/user/:email", authenticateToken, async (req, res) => {
+    app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
       console.log(email);
       const query = { email: email };
@@ -142,7 +142,7 @@ async function run() {
 
     //reading subscription filtered by mail
 
-    app.get("/subscription/:email", authenticateToken, async (req, res) => {
+    app.get("/subscription/:email", async (req, res) => {
       const email = { email: req.params.email };
       console.log(email);
       const result = subscriptionCollection.find(email);
@@ -216,7 +216,7 @@ async function run() {
     });
 
     //redaing notes from databe
-    app.get("/notes/:id", authenticateToken, async (req, res) => {
+    app.get("/notes/:id", async (req, res) => {
       const id = req.params.id;
       const data = { email: id };
       console.log(id);
