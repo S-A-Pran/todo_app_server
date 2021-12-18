@@ -55,16 +55,15 @@ async function run() {
     app.get("/users/:email", async (req, res) => {
       const email = req?.params?.email;
       console.log(req.params.email);
-      
-        const query = { email: email };
-        const user = await usersCollection.findOne(query);
-        let isAdmin = false;
-        if (user?.role === "admin") {
-          isAdmin = true;
-        }
-        // console.log(user, isAdmin);
-        res.json({ admin: isAdmin });
-      
+
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      // console.log(user, isAdmin);
+      res.json({ admin: isAdmin });
     });
 
     //deleteing user
@@ -85,7 +84,7 @@ async function run() {
     });
 
     //getting all users
-    app.get("/users",  async (req, res) => {
+    app.get("/users", async (req, res) => {
       const query = {};
       const user = usersCollection.find(query);
       const result = await user.toArray();
@@ -93,7 +92,7 @@ async function run() {
     });
 
     //getting single users
-    app.get("/user/:email",  async (req, res) => {
+    app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
       console.log(email);
       const query = { email: email };
@@ -141,11 +140,17 @@ async function run() {
     //reading subscription filtered by mail
 
     app.get("/subscription/:email", authenticateToken, async (req, res) => {
-      const email = { email: req.params.email };
-      console.log(email);
-      const result = subscriptionCollection.find(email);
-      const allResult = await result.toArray();
-      res.json(allResult);
+      const userEmail = req.user.email;
+      if (userEmail === req.params.email) {
+        const email = { email: req.params.email };
+        console.log(email);
+        const result = subscriptionCollection.find(email);
+        const allResult = await result.toArray();
+        res.json(allResult);
+      }
+      else{
+        res.sendStatus(401)
+      }
     });
 
     //for adding notes to database
@@ -214,7 +219,7 @@ async function run() {
     });
 
     //redaing notes from databe
-    app.get("/notes/:id",  async (req, res) => {
+    app.get("/notes/:id", async (req, res) => {
       const id = req.params.id;
       const data = { email: id };
       console.log(id);
